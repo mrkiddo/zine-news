@@ -1,7 +1,15 @@
 {
   "name": "zine-news",
   "version": "0.0.1",
-  "private": true,
+  "description": "vertical ottawazine original news reader",
+  "keywords": [
+    "news", "reader", "web", "crawler"
+  ],
+  "private": false,
+  "author": {
+    "name": "Jiawei Luo",
+    "email": "weiwei100fun@hotmail.com"
+  },
   "scripts": {
     "start": "node ./bin/www",
     "debug": "SET DEBUG=zine-news:* & node --nolazy --debug-brk=5858 ./bin/www",
