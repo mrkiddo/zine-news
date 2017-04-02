@@ -9,7 +9,7 @@ var articleSchema = new Schema({
     },
     categoryId: {
         type: Number,
-        default: 0
+        required: true
     },
     category: {
         type: String,
@@ -17,7 +17,7 @@ var articleSchema = new Schema({
     },
     articleId: {
         type: Number,
-        default: 0
+        require: true
     },
     title: {
         type: String,
@@ -53,6 +53,9 @@ articleSchema.statics.findLimit = function (start, count, categoryId) {
 articleSchema.statics.saveNoDuplicate = function (article) {
     var self = this;
     var processor = function (resolve, reject) {
+        if(!article) {
+            resolve(0);
+        }
         self.findByArticleId(article.articleId, function (err, doc) {
             if(err || (doc && doc.length > 0)) {
                 resolve(0);

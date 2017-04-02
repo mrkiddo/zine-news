@@ -5,4 +5,6 @@ var crawler = require('./crawler/crawler');
 
 var helpers = require('./crawler/modules/helpers');
 
-crawler();
+crawler({
+    pageLimit: 1
+});

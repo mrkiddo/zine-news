@@ -75,11 +75,13 @@ helpers.readFromFile = function (fileName) {
     });
 };
 
-helpers.getPageBody = function (pageUrl) {
+helpers.getPageBody = function (pageUrl, timeout) {
+    timeout = timeout || 4 * 1000;
     var processor = function (resolve, reject) {
         request({
             url: pageUrl,
-            method: 'GET'
+            method: 'GET',
+            timeout: timeout
         }, function (error, response, body) {
             if(error) {
                 reject(error);

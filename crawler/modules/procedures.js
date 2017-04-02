@@ -8,9 +8,10 @@ var Article = require('../../models/Article');
 var defaultOptions = {
     org: 'ottawazine',
     categoryId: 120,
-    category: 'canada news',
+    category: 'Canada News',
     baseUrl: 'https://ottawazine.com/category/canada/',
-    pageLimit: 3
+    pageLimit: 3,
+    requestTimeout: 4 * 1000
 };
 
 var Procedures = {
@@ -34,7 +35,7 @@ Procedures.getOZArticleLinks = function (callback) {
         baseUrl = self.options.baseUrl,
         linksList = [];
     var processor = function (cb) {
-        helpers.getPageBody(baseUrl + '/page/' + page).then(function (body) {
+        helpers.getPageBody(baseUrl + '/page/' + page, self.options.requestTimeout).then(function (body) {
             var links = Procedures.extractOZLinks(body);
             linksList = linksList.concat(links);
             page++;
@@ -47,7 +48,7 @@ Procedures.getOZArticleLinks = function (callback) {
         return page <= pageLimit;
     }, processor, function (error) {
         if(error) {
-            logger.c.log('error', 'Procedures: getOZArticleLinks Error ', error);
+            logger.c.log('error', 'Procedures: getOZArticleLinks ', error);
             logger.c.log('info', 'Procedures: getOZArticleLinks Finish');
             callback(error);
         }
@@ -71,7 +72,7 @@ Procedures.processOZPageContent = function (body) {
     result.articleId = body('article.post').attr('id') || '';
     result.articleId = result.articleId.match(/\b[0-9]+/g);
     result.articleId = result.articleId ? parseInt(result.articleId[0], 10) : 0;
-    if(result.articleId === 0) {
+    if(!result.articleId) {
         return false;
     }
     result.title = body('article header h1').text().trim();
@@ -96,12 +97,17 @@ Procedures.processOZPageContent = function (body) {
 Procedures.getOZArticleContent = function (links, callback) {
     var self = this;
     var processor = function (item, cb) {
-        helpers.getPageBody(item).then(function (body) {
+        helpers.getPageBody(item, self.options.requestTimeout).then(function (body) {
             var result = self.processOZPageContent(body);
-            if(!result) {
+            if(!result || !result.articleId) {
                 cb();
             }
-            return Article.saveNoDuplicate(result);
+            else {
+                return Article.saveNoDuplicate(result);
+            }
+        }, function (err) {
+            logger.c.log('error', 'Procedures: getOZArticleContent Request ', err.code);
+            cb();
         }).then(function (state) {
             if(state === 1) {
                 self.newCounter++;
@@ -109,19 +115,13 @@ Procedures.getOZArticleContent = function (links, callback) {
             }
             cb();
         }, function (err) {
-            cb(err);
+            logger.c.log('error', 'Procedures: getOZArticleContent DB ', err);
+            cb();
         });
     };
-    async.eachLimit(links, 1, processor, function (error) {
-        if(error) {
-            logger.c.log('error', 'Procedures: getOZArticleContent Error ', error);
-            logger.c.log('info', 'Procedures: getOZArticleContent Finish');
-            callback(error);
-        }
-        else {
-            logger.c.log('info', 'Procedures: getOZArticleContent Finish');
-            callback(null, true);
-        }
+    async.eachLimit(links, 10, processor, function (error) {
+        logger.c.log('info', 'Procedures: getOZArticleContent Finish');
+        callback();
     });
 };
 

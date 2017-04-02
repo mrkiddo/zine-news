@@ -3,7 +3,10 @@
   "version": "0.0.1",
   "description": "vertical ottawazine original news reader",
   "keywords": [
-    "news", "reader", "web", "crawler"
+    "news",
+    "reader",
+    "web",
+    "crawler"
   ],
   "private": false,
   "author": {
@@ -27,8 +30,14 @@
     "mongoose": "^4.9.1",
     "morgan": "~1.7.0",
     "promise": "^7.1.1",
+    "promise-timeout": "^1.1.1",
     "request": "^2.81.0",
     "serve-favicon": "~2.3.2",
     "winston": "^2.3.1"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mrkiddo/zine-news.git"
+  },
+  "license": "MIT"
 }

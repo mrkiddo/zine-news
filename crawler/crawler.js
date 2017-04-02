@@ -1,6 +1,7 @@
 var mongoose = require('mongoose');
 var async = require('async');
 var Promise = require('promise');
+var promiseTimeout = require('promise-timeout');
 var config = require('../config/config');
 var dataConfig = require('../config/dataConfig');
 var Procedures = require('./modules/procedures');
@@ -11,20 +12,23 @@ mongoose.connect(config.database);
 
 var lists = dataConfig.categories;
 
-var crawler = function () {
+var crawler = function (cfg) {
+    lists = lists.map(function (item) {
+        return Object.assign(item, cfg);
+    });
     var executeTime = logger.executeTime();
     var processor = function (item, callback) {
         var p = Procedures();
-        p.run(item).then(function (count) {
+        promiseTimeout.timeout(p.run(item), config.crawlerTimeout).then(function (count) {
             callback(null, count);
         }, function (error) {
-            callback(error);
+            callback(null, false);
         });
     };
 
     logger.c.log('info', 'Crawler: Start');
 
-    async.mapLimit(lists, 1, processor, function (err, results) {
+    async.map(lists, processor, function (err, results) {
         var newAddCounter = 0;
         if(err && err.length > 0) {
             err.forEach(function (er) {
@@ -33,7 +37,10 @@ var crawler = function () {
         }
         if(results && results.length > 0) {
             newAddCounter = results.reduce(function (init, current) {
-                return init += current;
+                if(current) {
+                    init += parseInt(current, 10);
+                }
+                return init;
             }, 0);
         }
         logger.c.log('info', 'Crawler: Finish', executeTime.end());
