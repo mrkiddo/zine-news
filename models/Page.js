@@ -1,4 +1,4 @@
-var pageService = require('../services/pageService');
+var config = require('../config/config');
 
 var Page = {};
 
@@ -18,11 +18,19 @@ Page.category = {
     list: {}
 };
 
+Page.article = {
+    type: 'article',
+    title: '',
+    header: '',
+    content: ''
+};
+
 module.exports = function (type) {
     type = type || 'index';
     var instance = {};
     if(Page[type]) {
         instance = Object.assign(Page[type]);
+        instance.siteUrl = config.siteUrl;
     }
     return instance;
 };

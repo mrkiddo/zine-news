@@ -41,12 +41,27 @@ articleSchema.statics.findByArticleId = function (id, cb) {
     return this.find({articleId: id}, cb);
 };
 
+articleSchema.statics.findById = function (id, cb) {
+    var self = this;
+    var processor = function (resolve, reject) {
+        self.find({_id: id}, function (err, doc) {
+            if(err) {
+                reject(err);
+            }
+            else {
+                resolve(doc);
+            }
+        });
+    };
+    return new Promise(processor);
+};
+
 articleSchema.statics.findLimit = function (start, count, categoryId) {
     categoryId = categoryId || 0;
     start = Number.isInteger(start) ? start : 0;
     count = Number.isInteger(count) ? count: 20;
     var condition = categoryId ? {categoryId: categoryId} : {};
-    return this.find(condition).sort().skip(start).limit(count)
+    return this.find(condition).sort({publish_date: -1}).skip(start).limit(count)
             .select('_id imageUrl title category publish_date').exec();
 };
 
@@ -77,9 +92,9 @@ articleSchema.statics.saveNoDuplicate = function (article) {
 
 articleSchema.statics.findSummary = function (counts) {
     counts = Object.assign({}, counts, {
-        120: 6,
+        120: 10,
         122: 4,
-        335: 4
+        335: 5
     });
     var self = this,
         requests = [];

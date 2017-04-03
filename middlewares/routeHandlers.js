@@ -40,8 +40,19 @@ var summaryDataHandler = function (req, res, next) {
     });
 };
 
+var perArticleRouteHandler = function (req, res, next) {
+    Article.findById(req.articleId).then(function (doc) {
+        req.data = doc;
+        next();
+    }, function (err) {
+        req.data = false;
+        next();
+    });
+};
+
 module.exports = {
     allRoutesHandler: allRoutesHandler,
     categoryRouteHandler: categoryRouteHandler,
-    summaryDataHandler: summaryDataHandler
+    summaryDataHandler: summaryDataHandler,
+    perArticleRouteHandler: perArticleRouteHandler
 };

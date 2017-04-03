@@ -1,0 +1,12 @@
+.btn-wrapper {
+    padding: 30px 0px 40px 0px;
+    text-align: center;
+}
+
+.content-wrapper {
+    padding: 30px 10px 0px 10px;
+}
+
+.content-wrapper img {
+    max-width: 100%;
+}

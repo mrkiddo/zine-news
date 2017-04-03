@@ -22,11 +22,34 @@ pageService.setHeader = function (extraTitle) {
     };
 };
 
-pageService.setList = function (title, categoryId, list) {
+pageService.setFooter = function () {
+    return {
+        content: {
+            lang: "en",
+            switchName: 'mobile',
+            owner: 'ottawazine',
+            companyInfo: [
+                {
+                    detail: 'Data credit <a href="http://www.ottawazine.com/">Ottawazine Globe Inc</a>'
+                },
+                {
+                    detail: 'Github <a href="https://github.com/mrkiddo/zine-news">zine-news</a>'
+                }
+            ]
+        }
+    };
+};
+
+pageService.setMoreButton = function (categoryId, currentPage) {
+    currentPage = currentPage || 1;
+    return config.siteUrl + '/category/' + categoryId + '/page/' + (currentPage + 1);
+};
+
+pageService.setList = function (title, categoryId, list, showMore) {
     list = list.map(function (value) {
         return {
             title: value.title,
-            link: 'article/' + value._id,
+            link: config.siteUrl + '/article/' + value._id,
             date: value.publish_date.toLocaleDateString()
         };
     });
@@ -34,9 +57,9 @@ pageService.setList = function (title, categoryId, list) {
         content: {
             header: {
                 title: title,
-                link: 'category/' + categoryId,
-                moreText: 'more >>',
-                morePosition: 'bottom'
+                link: config.siteUrl + '/category/' + categoryId,
+                moreText: showMore ? null : 'more >>',
+                morePosition: showMore ? null : 'bottom'
             },
             main: list
         }
@@ -47,16 +70,20 @@ pageService.setListThumbImage = function (title, categoryId, list) {
     list = list.map(function (value) {
         return {
             title: value.title,
-            link: 'article/' + value._id,
+            link: config.siteUrl + '/article/' + value._id,
             date: value.publish_date.toLocaleDateString(),
             img: value.imageUrl
         };
     });
     return {
+        options: {
+            type: 'thumb',
+            thumbPosition: 'left'
+        },
         content: {
             header: {
                 title: title,
-                link: 'category/' + categoryId,
+                link: config.siteUrl + '/category/' + categoryId,
                 moreText: 'more >>',
                 morePosition: 'bottom'
             },
@@ -65,14 +92,13 @@ pageService.setListThumbImage = function (title, categoryId, list) {
     };
 };
 
-pageService.setListImage = function (title, categoryId, list) {};
-
 pageService.setIndexPage = function (doc) {
     var categories = dataConfig.categories;
     var page = Page('index');
     var self = this;
     page.title = self.getTitle();
     page.header = self.setHeader();
+    page.footer= self.setFooter();
     categories.forEach(function (value, index) {
         if(value.categoryId === 120) {
             var list = doc[value.categoryId];
@@ -87,23 +113,40 @@ pageService.setIndexPage = function (doc) {
         else if(value.categoryId === 335) {
             var list = doc[value.categoryId];
             page.listEnt =
-                self.setListImage(value.category, value.categoryId, list);
+                self.setList(value.category, value.categoryId, list);
         }
     });
     return page;
 };
 
-pageService.setCategoryPage = function (categoryId, list) {
+pageService.setCategoryPage = function (categoryId, list, currentPage) {
     var self = this;
     var page = Page('index');
     var categories = dataConfig.categories;
     page.title = self.getTitle();
+    page.header = self.setHeader();
+    page.footer= self.setFooter();
+    page.link = self.setMoreButton(categoryId, currentPage);
     categories.forEach(function (value) {
         if(value.categoryId === categoryId) {
             page.header = self.setHeader(value.category);
         }
     });
-    page.list = self.setList(null, categoryId, list);
+    page.list = self.setList(null, categoryId, list, true);
+    return page;
+};
+
+pageService.setArticlePage = function (data) {
+    if(Array.isArray(data)) {
+        data = data[0];
+    }
+    var self = this;
+    var page = Page('article');
+    page.title = self.getTitle();
+    page.header = self.setHeader(data.title);
+    page.footer = self.setFooter();
+    page.articleTitle = data.title;
+    page.content = data.content;
     return page;
 };
 

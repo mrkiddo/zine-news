@@ -1,0 +1,15 @@
+{{#extend "stylesheets"}}
+    <link rel="stylesheet" href="{{siteUrl}}/lib/amazeui/dist/css/amazeui.min.css">
+    <link rel="stylesheet" href="{{siteUrl}}/styles/custom.css">
+{{/extend}}
+
+{{>header header}}
+
+{{>list_news list}}
+
+{{>moreBtn link}}
+
+{{#extend "scripts"}}
+    <scripts src="{{siteUrl}}/lib/jquery/jquery.min.js"></scripts>
+    <scripts src="{{siteUrl}}/lib/amazeui/dist/js/amazeui.min.js"></scripts>
+{{/extend}}

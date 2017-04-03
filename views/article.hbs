@@ -1,0 +1,18 @@
+{{#extend "stylesheets"}}
+    <link rel="stylesheet" href="{{siteUrl}}/lib/amazeui/dist/css/amazeui.min.css">
+    <link rel="stylesheet" href="{{siteUrl}}/styles/custom.css">
+{{/extend}}
+
+{{>header header}}
+
+<div class="content-wrapper">
+    <h1>{{articleTitle}}</h1>
+    <div class="content">
+        {{{content}}}
+    </div>
+</div>
+
+{{#extend "scripts"}}
+    <scripts src="lib/jquery/jquery.min.js"></scripts>
+    <scripts src="lib/amazeui/dist/js/amazeui.min.js"></scripts>
+{{/extend}}
