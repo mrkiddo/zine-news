@@ -40,12 +40,19 @@ pageService.setFooter = function () {
     };
 };
 
-pageService.setMoreButton = function (categoryId, currentPage) {
-    currentPage = currentPage || 1;
-    return config.siteUrl + '/category/' + categoryId + '/page/' + (currentPage + 1);
+pageService.setMoreButton = function (categoryId, currentPage, entryNum) {
+    var data = {
+        show: true,
+        url: config.siteUrl + '/category/' + categoryId + '/page/' + (currentPage + 1)
+    };
+    if(currentPage >= (entryNum / 10)) {
+        data.show = false;
+    }
+    return data;
 };
 
 pageService.setList = function (title, categoryId, list, showMore) {
+    list = list || [];
     list = list.map(function (value) {
         return {
             title: value.title,
@@ -119,20 +126,22 @@ pageService.setIndexPage = function (doc) {
     return page;
 };
 
-pageService.setCategoryPage = function (categoryId, list, currentPage) {
+pageService.setCategoryPage = function (categoryId, data, currentPage) {
+    currentPage = currentPage || 1;
     var self = this;
     var page = Page('index');
     var categories = dataConfig.categories;
+    var count = data.entryNum;
     page.title = self.getTitle();
     page.header = self.setHeader();
     page.footer= self.setFooter();
-    page.link = self.setMoreButton(categoryId, currentPage);
+    page.link = self.setMoreButton(categoryId, currentPage, count);
     categories.forEach(function (value) {
         if(value.categoryId === categoryId) {
             page.header = self.setHeader(value.category);
         }
     });
-    page.list = self.setList(null, categoryId, list, true);
+    page.list = self.setList(null, categoryId, data.list, true);
     return page;
 };
 

@@ -6,5 +6,6 @@ var crawler = require('./crawler/crawler');
 var helpers = require('./crawler/modules/helpers');
 
 crawler({
-    pageLimit: 1
+    pageLimit: 1,
+    requestTimeout: 10 * 1000
 });

@@ -18,7 +18,7 @@ module.exports = function (hbs) {
         return val;
     });
 
-    hbs.registerPartial('moreBtn', '<div class="btn-wrapper">' + '<a class="am-btn am-btn-default" href="{{this}}">more ...</a>' + '</div>');
+    hbs.registerPartial('moreBtn', '<div class="btn-wrapper">' + '{{#if show}}<a class="am-btn am-btn-default" href="{{url}}">more >> </a>{{/if}}' + '</div>');
 
     return hbs;
 };

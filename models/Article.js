@@ -61,8 +61,20 @@ articleSchema.statics.findLimit = function (start, count, categoryId) {
     start = Number.isInteger(start) ? start : 0;
     count = Number.isInteger(count) ? count: 20;
     var condition = categoryId ? {categoryId: categoryId} : {};
-    return this.find(condition).sort({publish_date: -1}).skip(start).limit(count)
+    var getNumber = this.find(condition).count().exec();
+    var getData = this.find(condition).sort({publish_date: -1}).skip(start).limit(count)
             .select('_id imageUrl title category publish_date').exec();
+    var processor = function (resolve, reject) {
+        Promise.all([getNumber, getData]).then(function (results) {
+            resolve({
+                entryNum: results[0],
+                list: results[1]
+            });
+        }, function (err) {
+            reject(err);
+        });
+    };
+    return new Promise(processor);
 };
 
 articleSchema.statics.saveNoDuplicate = function (article) {
@@ -104,9 +116,9 @@ articleSchema.statics.findSummary = function (counts) {
         requests.push(self.findLimit(0, counts[335], 335));
         Promise.all(requests).then(function (results) {
             resolve({
-                120: results[0],
-                122: results[1],
-                335: results[2]
+                120: results[0].list,
+                122: results[1].list,
+                335: results[2].list
             });
         }).catch(function (error) {
             reject(error);

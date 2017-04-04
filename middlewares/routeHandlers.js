@@ -6,8 +6,8 @@ var allRoutesHandler = function (req, res, next) {
         start;
     count = parseInt(count, 10);
     start = (page === 1) ? 0 : (page - 1) * count;
-    Article.findLimit(start, count).then(function (doc) {
-        req.data = doc;
+    Article.findLimit(start, count).then(function (data) {
+        req.data = data;
         next();
     }, function (error) {
         req.data = false;
@@ -21,8 +21,8 @@ var categoryRouteHandler = function (req, res, next) {
         categoryId = req.categoryId || 120,
         start;
     start = (page === 1) ? 0 : (page - 1) * count;
-    Article.findLimit(start, count, categoryId).then(function (doc) {
-        req.data = doc;
+    Article.findLimit(start, count, categoryId).then(function (data) {
+        req.data = data;
         next();
     }, function (error) {
         req.data = false;
@@ -31,8 +31,8 @@ var categoryRouteHandler = function (req, res, next) {
 };
 
 var summaryDataHandler = function (req, res, next) {
-    Article.findSummary().then(function (doc) {
-        req.data = doc;
+    Article.findSummary().then(function (data) {
+        req.data = data;
         next();
     }, function (error) {
         req.data = false;
