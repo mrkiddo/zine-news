@@ -196,8 +196,8 @@ Procedures.runAPI = function (options) {
     var categoryId = self.options.categoryId;
     var successNum = 0;
     var processor = function (cb) {
-        page++;
         var url = apiBaseUrl + 'id=' + categoryId + '&page=' + page;
+        page++;
         helpers.getPageBody(url, self.options.requestTimeout).then(function (body) {
             body = JSON.parse(body);
             var dataList = self.processOZApiContent(body.posts);
