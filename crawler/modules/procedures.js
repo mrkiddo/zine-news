@@ -121,6 +121,7 @@ Procedures.processOZApiContent = function (posts) {
         var content = self.extractParas(paras);
         o.org = self.options.org;
         o.categoryId = self.options.categoryId;
+        o.category = self.options.category;
         o.articleId = parseInt(post.id, 10);
         o.title = post.title_plain;
         o.content += content;
