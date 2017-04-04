@@ -19,7 +19,7 @@ var crawler = function (cfg) {
     var executeTime = logger.executeTime();
     var processor = function (item, callback) {
         var p = Procedures();
-        promiseTimeout.timeout(p.run(item), config.crawlerTimeout).then(function (count) {
+        promiseTimeout.timeout(p.runAPI(item), config.crawlerTimeout).then(function (count) {
             callback(null, count);
         }, function (error) {
             callback(null, false);

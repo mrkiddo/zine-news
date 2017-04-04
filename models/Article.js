@@ -102,6 +102,24 @@ articleSchema.statics.saveNoDuplicate = function (article) {
     return new Promise(processor);
 };
 
+articleSchema.statics.saveList = function (list) {
+    var tasks = [], self = this;
+    tasks = list.map(function (item) {
+        return self.saveNoDuplicate(item);
+    });
+    return new Promise(function (resolve, reject) {
+        Promise.all(tasks).then(function (results) {
+            var num = results.reduce(function (init, value) {
+                init += value;
+                return init;
+            }, 0);
+            resolve(num);
+        }, function (err) {
+            resolve(0);
+        });
+    });
+};
+
 articleSchema.statics.findSummary = function (counts) {
     counts = Object.assign({}, counts, {
         120: 10,
