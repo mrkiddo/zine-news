@@ -1,11 +1,15 @@
 var mongoose = require('mongoose');
 var Promise = require('promise');
-var Article = require('./models/Article');
+var schedule = require('node-schedule');
+
 var crawler = require('./crawler/crawler');
 
-var helpers = require('./crawler/modules/helpers');
+var rule = new schedule.RecurrenceRule();
+rule.minute = [10, 20, 30, 40, 50, 60];
 
-crawler({
-    pageLimit: 1,
-    requestTimeout: 10 * 1000
+var j = schedule.scheduleJob(rule, function () {
+    crawler({
+        pageLimit: 1,
+        requestTimeout: 10 * 1000
+    });
 });

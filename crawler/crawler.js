@@ -7,12 +7,17 @@ var dataConfig = require('../config/dataConfig');
 var Procedures = require('./modules/procedures');
 var logger = require('./modules/loggers');
 
-mongoose.Promise = Promise;
-mongoose.connect(config.database);
-
 var lists = dataConfig.categories;
+var dbConnector = function (mongoose) {
+    // if db not connected
+    if(mongoose.connection.readyState === 0) {
+        mongoose.Promise = Promise;
+        mongoose.connect(config.database);
+    }
+};
 
 var crawler = function (cfg) {
+    dbConnector(mongoose);
     lists = lists.map(function (item) {
         return Object.assign(item, cfg);
     });
@@ -22,7 +27,7 @@ var crawler = function (cfg) {
         promiseTimeout.timeout(p.runAPI(item), config.crawlerTimeout).then(function (count) {
             callback(null, count);
         }, function (error) {
-            callback(null, false);
+            callback(null, 0);
         });
     };
 

@@ -7,8 +7,10 @@ var bodyParser = require('body-parser');
 var Promise = require('promise');
 var mongoose = require('mongoose');
 var hbs = require('hbs');
+var schedule = require('node-schedule');
 
 var config = require('./config/config');
+var crawler = require('./crawler/crawler');
 
 var index = require('./routes/index');
 var articles = require('./routes/articles');
@@ -54,5 +56,15 @@ app.use(function(err, req, res, next) {
 // database connection
 mongoose.Promise = Promise;
 mongoose.connect(config.database);
+
+// schedule task
+var rule = new schedule.RecurrenceRule();
+rule.minute = config.scheduleRule;
+var j = schedule.scheduleJob(rule, function () {
+    crawler({
+        pageLimit: config.defaultPageSearch,
+        requestTimeout: config.requestTimeout
+    });
+});
 
 module.exports = app;

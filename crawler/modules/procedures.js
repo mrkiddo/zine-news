@@ -205,7 +205,7 @@ Procedures.runAPI = function (options) {
         }, function (err) {
             cb(err);
         }).then(function (num) {
-            successNum = num;
+            successNum += num;
             cb();
         }, function () {
             cb();
@@ -216,10 +216,11 @@ Procedures.runAPI = function (options) {
     return new Promise(function (resolve, reject) {
         async.whilst(function () {
             return page <= pageLimit;
-        }, processor, function (error) {
-            if(error) {
+        }, processor, function (err) {
+            if(err) {
+                logger.c.log('error', 'Procedures: Fail due to', err);
                 logger.c.log('info', 'Procedures: Finish', executeTime.end());
-                reject(error);
+                reject(err);
             }
             else {
                 logger.c.log('info', 'Procedures: Finish', executeTime.end());
