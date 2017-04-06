@@ -16,12 +16,14 @@
   "scripts": {
     "start": "node ./bin/www",
     "debug": "SET DEBUG=zine-news:* & node --nolazy --debug-brk=5858 ./bin/www",
-    "crawler": "node --nolazy --debug-brk=5858 ./testCrawler"
+    "crawler": "node --nolazy --debug-brk=5858 ./testCrawler",
+    "postinstall": "bower install"
   },
   "dependencies": {
     "amui-hbs-helper": "^2.2.0",
     "async": "^2.1.5",
     "body-parser": "~1.16.0",
+    "bower": "^1.8.0",
     "cheerio": "^0.22.0",
     "cookie-parser": "~1.4.3",
     "debug": "~2.6.0",
