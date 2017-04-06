@@ -116,7 +116,7 @@ Procedures.processOZApiContent = function (posts) {
         var images = elements('img');
         if(images.length > 0) {
             o.imageUrl = images.eq(0).attr('src');
-            o.content = '<p><img src="' + o.imgUrl + '"></p>';
+            o.content = '<p><img src="' + o.imageUrl + '"></p>';
         }
         var content = self.extractParas(paras);
         o.org = self.options.org;
