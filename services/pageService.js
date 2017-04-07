@@ -10,16 +10,24 @@ pageService.getTitle = function () {
     return config.siteName;
 };
 
-pageService.setHeader = function (extraTitle) {
+pageService.setHeader = function (extraTitle, backLink) {
     var title = config.siteName;
     if(extraTitle) {
         title += ' - ' + extraTitle; 
     }
-    return {
+    var o = {
         content: {
             title: title
         }
     };
+    if(backLink) {
+        o.content.left = [{
+            link: backLink,
+            title: '',
+            icon: 'chevron-left'
+        }];
+    }
+    return o;
 };
 
 pageService.setFooter = function () {
@@ -48,6 +56,14 @@ pageService.setMoreButton = function (categoryId, currentPage, entryNum) {
     if(currentPage >= (entryNum / 10)) {
         data.show = false;
     }
+    return data;
+};
+
+pageService.setBackButton = function (categoryId) {
+    var data = {
+        backCat: config.siteUrl + '/category/' + categoryId,
+        backHome: config.siteUrl
+    };
     return data;
 };
 
@@ -133,12 +149,11 @@ pageService.setCategoryPage = function (categoryId, data, currentPage) {
     var categories = dataConfig.categories;
     var count = data.entryNum;
     page.title = self.getTitle();
-    page.header = self.setHeader();
     page.footer= self.setFooter();
     page.link = self.setMoreButton(categoryId, currentPage, count);
     categories.forEach(function (value) {
         if(value.categoryId === categoryId) {
-            page.header = self.setHeader(value.category);
+            page.header = self.setHeader(value.category, config.siteUrl);
         }
     });
     page.list = self.setList(null, categoryId, data.list, true);
@@ -151,11 +166,14 @@ pageService.setArticlePage = function (data) {
     }
     var self = this;
     var page = Page('article');
+    var categories = dataConfig.categories;
+    var backLink = config.siteUrl + '/category/' + data.categoryId
+    page.header = self.setHeader(data.title, backLink);
     page.title = self.getTitle();
-    page.header = self.setHeader(data.title);
     page.footer = self.setFooter();
     page.articleTitle = data.title;
     page.content = data.content;
+    page.back = self.setBackButton(data.categoryId);
     return page;
 };
 

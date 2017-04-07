@@ -3,12 +3,11 @@ var winston = require('winston');
 var loggers = {},
     transports = [];
 
-if(process.env.NODE_ENV === 'development') {
-    transports.push(new (winston.transports.Console)({
-        prettyPrint: true,
-        colorize: true
-    }));
-}
+
+transports.push(new (winston.transports.Console)({
+    prettyPrint: true,
+    colorize: true
+}));
 
 loggers.c = new (winston.Logger)({
     transports: transports
